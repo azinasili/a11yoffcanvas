@@ -1,11 +1,11 @@
 {
   "name": "a11yoffcanvas",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A fully accessible and customizable off-canvas front-end component.",
   "homepage": "https://github.com/azinasili/a11yoffcanvas",
-  "authors": "Azin Asili <azinasili@gmail.com>",
+  "authors": "Azin Asili <hello@azinasili.com>",
   "license": "MIT",
-  "main": "a11yoffcanvas.js",
+  "main": "dist/a11yoffcanvas.js",
   "keywords": [
     "a11yoffcanvas",
     "a11y",
@@ -20,6 +20,8 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "bower.json"
+    "bower.json",
+    "package.json",
+    "src"
   ]
 }
