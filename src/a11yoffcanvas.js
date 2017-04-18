@@ -35,7 +35,7 @@ function _extendDefaults(source, override) {
  * @class  A11yOffCanvas
  * @param  {HTMLElement} trigger  - Element to initialise A11yOffCanvas
  * @param  {Object} options       - Options to customize A11yOffCanvas instance
- * @return {Object}               - Public init(), desyroy(), open(), and close()
+ * @return {Object}               - Public init(), destroy(), open(), and close()
  */
 function A11yOffCanvas(trigger, options) {
 
@@ -214,4 +214,15 @@ function A11yOffCanvas(trigger, options) {
 /**
  * Export A11yOffCanvas component.
  */
+if (typeof define === 'function' && define.amd) {
+  define(function () { return A11yOffCanvas; });
+} else if (typeof exports !== 'undefined') {
+  // Support Node.js specific `module.exports` (which can be a function)
+  if (typeof module !== 'undefined' && module.exports) {
+    exports = module.exports = A11yOffCanvas;
+  }
+  // But always support CommonJS module 1.1.1 spec (`exports` cannot be a function)
+  exports.A11yOffCanvas = A11yOffCanvas;
+}
+
 export default A11yOffCanvas;
