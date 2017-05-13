@@ -25,6 +25,7 @@ function A11yOffCanvas(trigger, options) {
   const DRAWER_ID = BUTTON.getAttribute('data-a11yoffcanvas-toggle');
   const DRAWER = document.getElementById(DRAWER_ID);
   const DRAWERS = _queryToArray('[data-a11yoffcanvas-drawer]');
+
   /**
    * Combined defaults and user options.
    */
