@@ -39,9 +39,6 @@ function A11yOffCanvas(trigger, options) {
   let drawerId = button.getAttribute('data-a11yoffcanvas-toggle');
   let drawer = document.getElementById(drawerId);
   let drawers = _queryToArray('[data-a11yoffcanvas-drawer]');
-  let drawerActive = null;
-  let currentButton = null;
-  let currentDrawer = null;
 
   /**
    * Initialize A11yOffCanvas.
@@ -76,10 +73,6 @@ function A11yOffCanvas(trigger, options) {
 
     button.setAttribute('aria-expanded', 'true');
     drawer.setAttribute('aria-hidden', 'false');
-
-    drawerActive = true;
-    currentButton = button;
-    currentDrawer = drawer;
   }
 
   /**
@@ -97,10 +90,6 @@ function A11yOffCanvas(trigger, options) {
 
       drawer.setAttribute('aria-hidden', 'true');
     });
-
-    drawerActive = false;
-    currentButton = null;
-    currentDrawer = null;
   }
 
   /**
@@ -131,7 +120,7 @@ function A11yOffCanvas(trigger, options) {
    * @func
    */
   function _toggleDrawer() {
-    if (drawerActive) {
+    if (this.getAttribute('aria-expanded') === 'true') {
       close();
     }
     else {
@@ -146,7 +135,7 @@ function A11yOffCanvas(trigger, options) {
    * @param {Event} event - Get current target of event
    */
   function _escapeKey(event) {
-    if (event.keyCode === 27 && drawerActive) close();
+    if (event.keyCode === 27) close();
   }
 
   /**
