@@ -123,8 +123,7 @@ function A11yOffCanvas(trigger, options) {
   function _toggleDrawer() {
     if (this.getAttribute('aria-expanded') === 'true') {
       close();
-    }
-    else {
+    } else {
       open();
     }
   }
