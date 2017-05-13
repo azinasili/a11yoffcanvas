@@ -52,6 +52,7 @@ Apply A11yOffCanvas to selected element (all options with default values are sho
 const tabs = new A11yOffCanvas(offcanvas, {
   drawerOpenClass: null,
   drawerCloseClass: null,
+  closeOnBodyClick: false,
 });
 ```
 
@@ -73,6 +74,11 @@ A11yOffCanvas will handle all ARIA roles/attributes, transforming the original H
 **Type:** `String` **Default:** `null`
 
 **Usage:** Class to add/remove to drawer is closed.
+
+#### closeOnBodyClick
+**Type:** `String` **Default:** `false`
+
+**Usage:** Close drawer when clicking out side of it when opened.
 
 
 ### Methods

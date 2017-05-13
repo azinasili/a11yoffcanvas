@@ -14,6 +14,7 @@ function A11yOffCanvas(trigger, options) {
   const DEFAULTS = {
     drawerOpenClass: null,
     drawerCloseClass: null,
+    closeOnBodyClick: false,
   };
 
   /**
@@ -128,6 +129,22 @@ function A11yOffCanvas(trigger, options) {
   }
 
   /**
+   * Close drawer when clicked outside of it.
+   *
+   * @func
+   * @param {Event} event - Get current target of event
+   */
+  function _closeOnBodyClick(event) {
+    const TARGET = event.target;
+    const TARGET_DRAWER = TARGET.hasAttribute('data-a11yoffcanvas-drawer');
+    const TARGET_BUTTON = TARGET.hasAttribute('data-a11yoffcanvas-toggle');
+
+    if (!TARGET_BUTTON && !TARGET_DRAWER && DRAWER.getAttribute('aria-hidden') === 'false') {
+      close();
+    }
+  }
+
+  /**
    * Keyboard navigation callback.
    *
    * @func
@@ -145,6 +162,7 @@ function A11yOffCanvas(trigger, options) {
   function _addEvents() {
     BUTTON.addEventListener('click', _toggleDrawer, false);
     document.addEventListener('keydown', _escapeKey, false);
+    if (settings.closeOnBodyClick) document.addEventListener('click', _closeOnBodyClick, false);
   }
 
   /**
@@ -155,6 +173,7 @@ function A11yOffCanvas(trigger, options) {
   function _removeEvents() {
     BUTTON.removeEventListener('click', _toggleDrawer, false);
     document.removeEventListener('keydown', _escapeKey, false);
+    if (settings.closeOnBodyClick) document.removeEventListener('click', _closeOnBodyClick, false);
   }
 
   /**
