@@ -204,4 +204,4 @@ function A11yOffCanvas(trigger, options) {
 /**
  * Export A11yOffCanvas component.
  */
-// export default A11yOffCanvas;
+export default A11yOffCanvas;
