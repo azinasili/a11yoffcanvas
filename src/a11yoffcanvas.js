@@ -11,7 +11,7 @@ function A11yOffCanvas(trigger, options) {
   /**
    * Default options used in A11yOffCanvas.
    */
-  const defaults = {
+  const DEFAULTS = {
     drawerOpenClass: null,
     drawerCloseClass: null,
   };
@@ -26,19 +26,19 @@ function A11yOffCanvas(trigger, options) {
    * Combine options with defaults.
    */
   if (options && typeof options == 'object') {
-    settings = {...defaults, ...options};
+    settings = {...DEFAULTS, ...options};
   } else {
-    settings = {...defaults};
+    settings = {...DEFAULTS};
   }
 
   /**
    * Collect elements.
    */
-  let button = trigger;
-  let buttons = _queryToArray('[data-a11yoffcanvas-toggle]');
-  let drawerId = button.getAttribute('data-a11yoffcanvas-toggle');
-  let drawer = document.getElementById(drawerId);
-  let drawers = _queryToArray('[data-a11yoffcanvas-drawer]');
+  const BUTTON = trigger;
+  const BUTTONS = _queryToArray('[data-a11yoffcanvas-toggle]');
+  const DRAWER_ID = BUTTON.getAttribute('data-a11yoffcanvas-toggle');
+  const DRAWER = document.getElementById(DRAWER_ID);
+  const DRAWERS = _queryToArray('[data-a11yoffcanvas-drawer]');
 
   /**
    * Initialize A11yOffCanvas.
@@ -69,10 +69,10 @@ function A11yOffCanvas(trigger, options) {
   function open() {
     close();
 
-    if (settings.drawerOpenClass) drawer.classList.add(settings.drawerOpenClass);
+    if (settings.drawerOpenClass) DRAWER.classList.add(settings.drawerOpenClass);
 
-    button.setAttribute('aria-expanded', 'true');
-    drawer.setAttribute('aria-hidden', 'false');
+    BUTTON.setAttribute('aria-expanded', 'true');
+    DRAWER.setAttribute('aria-hidden', 'false');
   }
 
   /**
@@ -81,11 +81,11 @@ function A11yOffCanvas(trigger, options) {
    * @method
    */
   function close() {
-    buttons.forEach((button) => {
+    BUTTONS.forEach((button) => {
       button.setAttribute('aria-expanded', 'false');
     });
 
-    drawers.forEach((drawer) => {
+    DRAWERS.forEach((drawer) => {
       if (settings.drawerOpenClass) drawer.classList.remove(settings.drawerOpenClass);
 
       drawer.setAttribute('aria-hidden', 'true');
@@ -98,9 +98,9 @@ function A11yOffCanvas(trigger, options) {
    * @func
    */
   function _addARIA() {
-    button.setAttribute('aria-controls', drawerId);
-    button.setAttribute('aria-expanded', 'false');
-    drawer.setAttribute('aria-hidden', 'true');
+    BUTTON.setAttribute('aria-controls', DRAWER_ID);
+    BUTTON.setAttribute('aria-expanded', 'false');
+    DRAWER.setAttribute('aria-hidden', 'true');
   }
 
   /**
@@ -109,9 +109,9 @@ function A11yOffCanvas(trigger, options) {
    * @func
    */
   function _removeARIA() {
-    button.removeAttribute('aria-controls');
-    button.removeAttribute('aria-expanded');
-    drawer.removeAttribute('aria-hidden');
+    BUTTON.removeAttribute('aria-controls');
+    BUTTON.removeAttribute('aria-expanded');
+    DRAWER.removeAttribute('aria-hidden');
   }
 
   /**
@@ -144,7 +144,7 @@ function A11yOffCanvas(trigger, options) {
    * @func
    */
   function _addEvents() {
-    button.addEventListener('click', _toggleDrawer, false);
+    BUTTON.addEventListener('click', _toggleDrawer, false);
     document.addEventListener('keydown', _escapeKey, false);
   }
 
@@ -154,7 +154,7 @@ function A11yOffCanvas(trigger, options) {
    * @func
    */
   function _removeEvents() {
-    button.removeEventListener('click', _toggleDrawer, false);
+    BUTTON.removeEventListener('click', _toggleDrawer, false);
     document.removeEventListener('keydown', _escapeKey, false);
   }
 
