@@ -17,6 +17,14 @@ function A11yOffCanvas(trigger, options) {
   };
 
   /**
+   * Collect elements.
+   */
+  const BUTTON = trigger;
+  const BUTTONS = _queryToArray('[data-a11yoffcanvas-toggle]');
+  const DRAWER_ID = BUTTON.getAttribute('data-a11yoffcanvas-toggle');
+  const DRAWER = document.getElementById(DRAWER_ID);
+  const DRAWERS = _queryToArray('[data-a11yoffcanvas-drawer]');
+  /**
    * Combined defaults and user options.
    */
   let settings;
@@ -30,15 +38,6 @@ function A11yOffCanvas(trigger, options) {
   } else {
     settings = {...DEFAULTS};
   }
-
-  /**
-   * Collect elements.
-   */
-  const BUTTON = trigger;
-  const BUTTONS = _queryToArray('[data-a11yoffcanvas-toggle]');
-  const DRAWER_ID = BUTTON.getAttribute('data-a11yoffcanvas-toggle');
-  const DRAWER = document.getElementById(DRAWER_ID);
-  const DRAWERS = _queryToArray('[data-a11yoffcanvas-drawer]');
 
   /**
    * Initialize A11yOffCanvas.
