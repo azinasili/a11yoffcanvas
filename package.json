@@ -28,7 +28,6 @@
   },
   "scripts": {
     "build": "rollup --config rollup.config.js",
-    "test": "jest tests/**/*.test.js --coverage",
     "lint": "eslint \"{src,tests}/**/*.js\"",
     "watch": "npm-watch",
     "prepublishOnly": "npm run build"
