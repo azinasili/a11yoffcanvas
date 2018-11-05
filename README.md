@@ -1,99 +1,95 @@
 # A11yOffCanvas
-A fully accessible and customizable off-canvas front-end component. Apply it a single button/drawer or all of them on your page. A11yOffCanvas allows you to use whatever markup you like, you can apply your own classes and everything will just work.
+A fully accessible and customizable off-canvas front-end component. Use your own markup and styles and let A11yOffCanvas do the hard stuff for you.
 
 [DEMO](https://codepen.io/azinasili/pen/adNZxo?editors=0010)
 
+
 ## Installation
-With [NPM](https://www.npmjs.com/package/a11yoffcanvas):
+A11yOffCanvas is available at:
 
-```bash
-npm install a11yoffcanvas --save
-```
-
-With [Bower](https://bower.io/):
-
-```bash
-bower install a11yoffcanvas --save
-```
-
-Or include A11yOffCanvas directly:
-
-```html
-<script src="/path/to/a11yoffcanvas.js"></script>
-```
-
-A11yOffCanvas is written using [ES2015 modules](http://2ality.com/2014/09/es6-modules-final.html). To import A11yOffCanvas into an ES2015 application:
-
-```javascript
-import A11yOffCanvas from 'a11yoffcanvas';
-```
+| Source |  |
+|:-------|:-|
+| NPM    | `npm install a11yoffcanvas --save` |
+| Yarn   | `yarn add a11yoffcanvas` |
+| unpkg  | [`https://unpkg.com/a11yoffcanvas`](https://unpkg.com/a11yoffcanvas) |
 
 
 ## Usage
-A11yOffCanvas does require a small amount of markup to function, an interactive element and an element for the drawer.
+A11yOffCanvas does require minimal amount of markup to function:
 
 ```html
-<button class="a11yoffcanvas" data-a11yoffcanvas-toggle="drawerLeft">Open drawer</button>
-<aside class="a11yoffcanvas-drawer" id="drawerLeft" data-a11yoffcanvas-drawer>...</aside>
+<!--
+  - Trigger for drawer must have `data-a11yoffcanvas-trigger` attribute must point to the id of it's corresponding drawer
+-->
+<button data-a11yoffcanvas-trigger="drawerLeft">Open drawer</button>
+<!--
+  - Although the drawer is not required to be an `<aside>`, semantically it's an appropriate tag to use
+  - Drawers must have an unique id
+  - Drawers must have `data-a11yoffcanvas-drawer` attribute
+-->
+<aside id="drawerLeft" data-a11yoffcanvas-drawer>
+  <!--
+    - Add optional `data-a11yoffcanvas-close` attribute to be able to close drawers
+  -->
+  <a href="#" data-a11yoffcanvas-close>x</a>
+</aside>
 ```
-**Note:** *Elements to use, source ordering, and other markup is completely customizable.*
-
-**Note:** *A11yOffCanvas is a BYOCSS component. Style your drawer however you like, A11yOffCanvas only has the ability to add/remove classes.
-
-Select element to initalise A11yOffCanvas on.
 
 ```javascript
-const offcanvas = document.querySelector('.a11yoffcanvas');
-```
+// Import A11yOffCanvas if utilizing JS modules
+import A11yOffCanvas from 'a11yoffcanvas';
 
-Apply A11yOffCanvas to selected element (all options with default values are shown).
-
-```javascript
-const tabs = new A11yOffCanvas(offcanvas, {
-  drawerOpenClass: null,
+// Create a new instance of A11yOffCanvas
+// All options and default values shown
+const drawerTrigger = document.querySelector('button');
+const offcanvas = new A11yOffCanvas(drawerTrigger, {
   drawerCloseClass: null,
-  closeOnBodyClick: false,
+  drawerOpenClass: null,
+  closeOnClick: false,
+  afterCloseFunction: null,
+  afterOpenFunction: null,
+  beforeCloseFunction: null,
+  beforeOpenFunction: null,
+  addEvents: false,
+  trapFocus: true,
 });
+
+// Initialize your new tabs
+offcanvas.init();
 ```
 
-A11yOffCanvas will handle all ARIA roles/attributes, transforming the original HTML into the following:
+A11yOffCanvas will handle all ARIA roles/attributes, focus management, and events, which transform the original HTML into the following:
 
 ```html
-<button class="a11yoffcanvas" data-a11yoffcanvas-toggle="drawerLeft" aria-controls="drawerLeft" aria-expanded="false">Open drawer</button>
-<aside class="a11yoffcanvas-drawer" id="drawerLeft" data-a11yoffcanvas-drawer aria-hidden="true">...</aside>
+<button data-a11yoffcanvas-toggle="drawerLeft" aria-controls="drawerLeft" aria-expanded="false">Open drawer</button>
+<aside id="drawerLeft" data-a11yoffcanvas-drawer aria-hidden="true">
+  <a href="#" data-a11yoffcanvas-close>x</a>
+</aside>
 ```
 
 
-### Configuration options
-#### drawerOpenClass
-**Type:** `String` **Default:** `null`
+## A11yOffCanvas API
 
-**Usage:** Class to add/remove to drawer when opened.
-
-#### drawerCloseClass
-**Type:** `String` **Default:** `null`
-
-**Usage:** Class to add/remove to drawer is closed.
-
-#### closeOnBodyClick
-**Type:** `String` **Default:** `false`
-
-**Usage:** Close drawer when clicking out side of it when opened.
-
+### Options
+| Property            | Type        | Default | Description |
+|:--------------------|:------------|:--------|:------------|
+| drawerCloseClass    | String      | `null`  | Class to add to drawer when closed |
+| drawerOpenClass     | String      | `null`  | Class to add to drawer when opened |
+| closeOnClick        | String      | `null`  | Close drawer when clicking outside outside of it |
+| afterCloseFunction  | Function    | `null`  | Function to run after drawer closes |
+| afterOpenFunction   | Function    | `null`  | Function to run after drawer opens |
+| beforeCloseFunction | Function    | `null`  | Function to run before drawer closes |
+| beforeOpenFunction  | Function    | `null`  | Function to run before drawer opens |
+| addEvents           | Boolean     | `false` | Add custom A11yOffCanvas events |
+| trapFocus           | Boolean     | `true ` | Trap focus within opened drawer |
 
 ### Methods
-
-#### init()
-**Usage:** Creates new instance of A11yOffCanvas, adds event listeners, and adds ARIA attributes to passed element.
-
-#### destroy()
-**Usage:** Kills the instance of A11yOffCanvas, removes all event listerners and reverts `HTML` back to intial state.
-
-#### open()
-**Usage:** Open selected drawer.
-
-#### close()
-**Usage:** Close selected drawer.
+| Name    | Description |
+|:--------|:------------|
+| init    | Initializes instance of A11yOffCanvas |
+| destroy | Kills instance of A11yOffCanvas |
+| open    | Open drawer |
+| close   | Close drawer |
 
 
 ## License
