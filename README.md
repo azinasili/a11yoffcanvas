@@ -1,10 +1,11 @@
 # A11yOffCanvas
+
 A fully accessible and customizable off-canvas front-end component. Use your own markup and styles and let A11yOffCanvas do the hard stuff for you.
 
 [DEMO](https://codepen.io/azinasili/pen/adNZxo?editors=0010)
 
-
 ## Installation
+
 A11yOffCanvas is available at:
 
 | Source |  |
@@ -13,8 +14,8 @@ A11yOffCanvas is available at:
 | Yarn   | `yarn add a11yoffcanvas` |
 | unpkg  | [`https://unpkg.com/a11yoffcanvas`](https://unpkg.com/a11yoffcanvas) |
 
-
 ## Usage
+
 A11yOffCanvas does require minimal amount of markup to function:
 
 ```html
@@ -67,10 +68,10 @@ A11yOffCanvas will handle all ARIA roles/attributes, focus management, and event
 </aside>
 ```
 
-
 ## A11yOffCanvas API
 
 ### Options
+
 | Property            | Type        | Default | Description |
 |:--------------------|:------------|:--------|:------------|
 | drawerCloseClass    | String      | `null`  | Class to add to drawer when closed |
@@ -81,9 +82,10 @@ A11yOffCanvas will handle all ARIA roles/attributes, focus management, and event
 | beforeCloseFunction | Function    | `null`  | Function to run before drawer closes |
 | beforeOpenFunction  | Function    | `null`  | Function to run before drawer opens |
 | addEvents           | Boolean     | `false` | Add custom A11yOffCanvas events |
-| trapFocus           | Boolean     | `true ` | Trap focus within opened drawer |
+| trapFocus           | Boolean     | `true`  | Trap focus within opened drawer |
 
 ### Methods
+
 | Name    | Description |
 |:--------|:------------|
 | init    | Initializes instance of A11yOffCanvas |
@@ -91,6 +93,6 @@ A11yOffCanvas will handle all ARIA roles/attributes, focus management, and event
 | open    | Open drawer |
 | close   | Close drawer |
 
-
 ## License
+
 MIT License

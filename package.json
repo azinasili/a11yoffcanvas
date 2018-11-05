@@ -30,7 +30,9 @@
     "build": "rollup --config rollup.config.js",
     "lint": "eslint \"{src,tests}/**/*.js\"",
     "watch": "npm-watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "preversion": "npm lint",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
