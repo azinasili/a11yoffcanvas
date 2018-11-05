@@ -1,207 +1,390 @@
+import A11yTrap from 'a11ytrap';
+
 /**
- * Create a new A11yOffCanvas instance.
- *
- * @class  A11yOffCanvas
- * @param  {HTMLElement} trigger  - Element to initialise A11yOffCanvas
- * @param  {Object} options       - Options to customize A11yOffCanvas instance
- * @return {Object}               - Public init(), destroy(), open(), and close()
+ * A11yOffCanvas - A fully accessible and customizable off-canvas element
+ * @module A11yOffCanvas
  */
-function A11yOffCanvas(trigger, options) {
 
+/**
+ * A11yOffCanvas
+ */
+export default class A11yOffCanvas {
+  /* eslint-disable max-len */
   /**
-   * Default options used in A11yOffCanvas.
+   * Create Settings for A11yOffCanvas
+   * @param {HTMLElement} trigger                     = null  - Trigger element for drawer
+   * @param {Object}      options                     = null  - Options to customize A11yOffCanvas instance
+   * @param {String}      options.drawerCloseClass    = null  - Class to add to drawer when closed
+   * @param {String}      options.drawerOpenClass     = null  - Class to add to drawer when opened
+   * @param {Boolean}     options.closeOnClick        = false - Close drawer when clicking outside outside of it
+   * @param {Function}    options.afterCloseFunction  = null  - Function to run after drawer closes
+   * @param {Function}    options.afterOpenFunction   = null  - Function to run after drawer opens
+   * @param {Function}    options.beforeCloseFunction = null  - Function to run before drawer closes
+   * @param {Function}    options.beforeOpenFunction  = null  - Function to run before drawer opens
+   * @param {Boolean}     options.addEvents           = false - Add custom A11yOffCanvas events
+   * @param {Boolean}     options.trapFocus           = true  - Trap focus within opened drawer
    */
-  const DEFAULTS = {
-    drawerOpenClass: null,
-    drawerCloseClass: null,
-    closeOnBodyClick: false,
-  };
+  /* eslint-enable max-len */
+  constructor(trigger = null, options = {}) {
+    const defaults = {
+      drawerCloseClass: null,
+      drawerOpenClass: null,
+      closeOnClick: false,
+      afterCloseFunction: null,
+      afterOpenFunction: null,
+      beforeCloseFunction: null,
+      beforeOpenFunction: null,
+      addEvents: false,
+      trapFocus: true,
+    };
 
-  /**
-   * Collect elements.
-   */
-  const BUTTON = trigger;
-  const BUTTONS = _queryToArray('[data-a11yoffcanvas-toggle]');
-  const DRAWER_ID = BUTTON.getAttribute('data-a11yoffcanvas-toggle');
-  const DRAWER = document.getElementById(DRAWER_ID);
-  const DRAWERS = _queryToArray('[data-a11yoffcanvas-drawer]');
-
-  /**
-   * Combined defaults and user options.
-   */
-  let settings;
-
-  /**
-   * If options object passed to A11yOffCanvas
-   * Combine options with defaults.
-   */
-  if (options && typeof options == 'object') {
-    settings = {...DEFAULTS, ...options};
-  } else {
-    settings = {...DEFAULTS};
+    this.settings = Object.assign({}, defaults, options);
+    this.trigger = trigger;
+    this.drawer = document.querySelector(`#${this.trigger.getAttribute('data-a11yoffcanvas-trigger')}`);
+    this.allTriggers = [...document.querySelectorAll('[data-a11yoffcanvas-trigger]')];
+    this.allDrawers = [...document.querySelectorAll('[data-a11yoffcanvas-drawer]')];
+    this.allClose = [...document.querySelectorAll('[data-a11yoffcanvas-close]')];
+    this.active = false;
+    this.loaded = false;
+    this.trap = null;
   }
 
   /**
-   * Initialize A11yOffCanvas.
-   *
-   * @method
+   * Initialize instance of A11yOffCanvas
+   * @returns {Object} - A11yOffCanvas instance
    */
-  function init() {
-    _addARIA();
-    _addEvents();
-  }
-  init();
+  init() {
+    this.addARIA();
+    this.addEvents();
+    this.loaded = true;
 
-  /**
-   * Remove all added ARIA attributes and events.
-   *
-   * @method
-   */
-  function destroy() {
-    _removeARIA();
-    _removeEvents();
+    return this;
   }
 
   /**
-   * Open A11yOffCanvas drawer.
-   *
-   * @method
+   * Kills instance of A11yOffCanvas
+   * @returns {Object} - A11yOffCanvas instance
    */
-  function open() {
-    close();
+  destroy() {
+    this.close();
+    this.removeARIA();
+    this.removeEvents();
+    this.active = false;
+    this.loaded = false;
+    this.trap = null;
 
-    if (settings.drawerOpenClass) DRAWER.classList.add(settings.drawerOpenClass);
-
-    BUTTON.setAttribute('aria-expanded', 'true');
-    DRAWER.setAttribute('aria-hidden', 'false');
+    return this;
   }
 
   /**
-   * Close A11yOffCanvas drawer.
-   *
-   * @method
+   * Open drawer
+   * @returns {Object} - A11yOffCanvas instance
    */
-  function close() {
-    BUTTONS.forEach((button) => {
-      button.setAttribute('aria-expanded', 'false');
+  open() {
+    const {
+      eventNames,
+      fireEvent,
+      isFunction,
+      isBoolean,
+    } = this.constructor;
+    const {
+      addEvents,
+      afterOpenFunction,
+      beforeOpenFunction,
+      trapFocus,
+    } = this.settings;
+
+    this.close();
+
+    if (
+      this.loaded
+      && addEvents
+      && isBoolean(addEvents)
+    ) {
+      fireEvent(eventNames().beforeOpen);
+    }
+
+    if (
+      this.loaded
+      && beforeOpenFunction
+      && isFunction(beforeOpenFunction)
+    ) {
+      beforeOpenFunction();
+    }
+
+    if (this.settings.drawerOpenClass) {
+      this.drawer.classList.add(this.settings.drawerOpenClass);
+    }
+
+    this.trigger.setAttribute('aria-expanded', true);
+    this.drawer.setAttribute('aria-hidden', false);
+    this.drawer.setAttribute('tabindex', 0);
+    this.drawer.focus();
+    this.active = true;
+
+    if (trapFocus && isBoolean(trapFocus)) {
+      this.trap = new A11yTrap(`#${this.drawer.getAttribute('id')}`);
+      this.trap.init();
+    }
+
+    if (
+      this.loaded
+      && addEvents
+      && isBoolean(addEvents)
+    ) {
+      fireEvent(eventNames().afterOpen);
+    }
+
+    if (
+      this.loaded
+      && afterOpenFunction
+      && isFunction(afterOpenFunction)
+    ) {
+      afterOpenFunction();
+    }
+
+    return this;
+  }
+
+  /**
+   * Close drawer
+   * @returns {Object} - A11yOffCanvas instance
+   */
+  close() {
+    const {
+      eventNames,
+      fireEvent,
+      isFunction,
+      isBoolean,
+    } = this.constructor;
+    const {
+      addEvents,
+      beforeCloseFunction,
+      afterCloseFunction,
+      trapFocus,
+    } = this.settings;
+
+    if (
+      this.loaded
+      && addEvents
+      && isBoolean(addEvents)
+    ) {
+      fireEvent(eventNames().beforeClose);
+    }
+
+    if (
+      this.loaded
+      && beforeCloseFunction
+      && isFunction(beforeCloseFunction)
+    ) {
+      beforeCloseFunction();
+    }
+
+    if (this.active) {
+      this.trigger.focus();
+    }
+
+    this.allTriggers.forEach(trigger => trigger.setAttribute('aria-expanded', false));
+
+    this.allDrawers.forEach((drawer) => {
+      if (this.settings.drawerOpenClass) {
+        drawer.classList.remove(this.settings.drawerOpenClass);
+      }
+
+      drawer.setAttribute('aria-hidden', true);
+      drawer.setAttribute('tabindex', -1);
     });
 
-    DRAWERS.forEach((drawer) => {
-      if (settings.drawerOpenClass) drawer.classList.remove(settings.drawerOpenClass);
+    this.active = false;
 
-      drawer.setAttribute('aria-hidden', 'true');
-    });
+    if (trapFocus && isBoolean(trapFocus) && this.trap) {
+      this.trap.destroy();
+      this.trap = null;
+    }
+
+    if (
+      this.loaded
+      && addEvents
+      && isBoolean(addEvents)
+    ) {
+      fireEvent(eventNames().afterClose);
+    }
+
+    if (
+      this.loaded
+      && afterCloseFunction
+      && isFunction(afterCloseFunction)
+    ) {
+      afterCloseFunction();
+    }
+
+    return this;
   }
 
   /**
-   * Add ARIA and accessibility attributes.
-   *
-   * @func
+   * Add ARIA attributes to DOM elements
+   * @private
    */
-  function _addARIA() {
-    BUTTON.setAttribute('aria-controls', DRAWER_ID);
-    BUTTON.setAttribute('aria-expanded', 'false');
-    DRAWER.setAttribute('aria-hidden', 'true');
+  addARIA() {
+    this.trigger.setAttribute('aria-controls', this.drawer.getAttribute('id'));
+    this.trigger.setAttribute('aria-expanded', false);
+    this.drawer.setAttribute('aria-hidden', true);
+    this.drawer.setAttribute('tabindex', -1);
   }
 
   /**
-   * Remove ARIA and accessibility attributes.
-   *
-   * @func
+   * Remove ARIA attributes
+   * @private
    */
-  function _removeARIA() {
-    BUTTON.removeAttribute('aria-controls');
-    BUTTON.removeAttribute('aria-expanded');
-    DRAWER.removeAttribute('aria-hidden');
+  removeARIA() {
+    this.trigger.removeAttribute('aria-controls');
+    this.trigger.removeAttribute('aria-expanded');
+    this.drawer.removeAttribute('aria-hidden');
+    this.drawer.removeAttribute('tabindex');
   }
 
   /**
-   * Toggle A11yOffCanvas drawer open and close.
-   *
-   * @func
+   * Add events to A11yOffCanvas instance
+   * @private
    */
-  function _toggleDrawer() {
-    if (this.getAttribute('aria-expanded') === 'true') {
-      close();
-    } else {
-      open();
+  addEvents() {
+    if (this.settings.closeOnClick) {
+      document.addEventListener('click', this.handleCloseOnClick.bind(this), false);
+    }
+
+    this.trigger.addEventListener('click', this, false);
+    document.addEventListener('keydown', this, false);
+  }
+
+  /**
+   * Remove events from A11yOffCanvas instance
+   * @private
+   */
+  removeEvents() {
+    if (this.settings.closeOnClick) {
+      document.removeEventListener('click', this.handleCloseOnClick.bind(this), false);
+    }
+
+    this.trigger.removeEventListener('click', this, false);
+    document.removeEventListener('keydown', this, false);
+  }
+
+  /**
+   * Handle closing drawer when clicking outside of it
+   * @private
+   * @param {Event} event - Get current target of event
+   */
+  handleCloseOnClick(event) {
+    const { target } = event;
+    const drawer = target.hasAttribute('data-a11yoffcanvas-drawer');
+    const trigger = target.hasAttribute('data-a11yoffcanvas-trigger');
+    const closeButton = target.hasAttribute('data-a11yoffcanvas-close');
+
+    if (closeButton) {
+      this.close();
+    }
+
+    if (
+      !trigger
+      && !drawer
+      && target.closest(`#${this.drawer.getAttribute('id')}`) !== this.drawer
+      && this.drawer.getAttribute('aria-hidden') === 'false'
+    ) {
+      this.close();
     }
   }
 
   /**
-   * Close drawer when clicked outside of it.
-   *
-   * @func
+   * Keyboard navigation callback
+   * @private
    * @param {Event} event - Get current target of event
    */
-  function _closeOnBodyClick(event) {
-    const TARGET = event.target;
-    const TARGET_DRAWER = TARGET.hasAttribute('data-a11yoffcanvas-drawer');
-    const TARGET_BUTTON = TARGET.hasAttribute('data-a11yoffcanvas-toggle');
+  handleKeydownEvent(event) {
+    if (event.metaKey || event.altKey) {
+      return;
+    }
 
-    if (!TARGET_BUTTON && !TARGET_DRAWER && DRAWER.getAttribute('aria-hidden') === 'false') {
-      close();
+    if (this.active && event.which === 27) {
+      this.close();
     }
   }
 
   /**
-   * Keyboard navigation callback.
-   *
-   * @func
+   * Custom event handler
+   * `this` can be passed as the second param to `addEventListener()`
+   * for it to work a function named `handleEvent` must be added to object
+   * @see
+   *   https://medium.com/@photokandy/til-you-can-pass-an-object-instead-of-a-function-to-addeventlistener-7838a3c4ec62
+   * @private
    * @param {Event} event - Get current target of event
    */
-  function _escapeKey(event) {
-    if (event.keyCode === 27) close();
+  handleEvent(event) {
+    switch (event.type) {
+      case 'click':
+        this.open();
+        break;
+      case 'keydown':
+        this.handleKeydownEvent(event);
+        break;
+      default:
+        break;
+    }
   }
 
   /**
-   * Add events to A11yOffCanvas instance.
-   *
-   * @func
+   * Map all event names
+   * @private
    */
-  function _addEvents() {
-    BUTTON.addEventListener('click', _toggleDrawer, false);
-    document.addEventListener('keydown', _escapeKey, false);
-    if (settings.closeOnBodyClick) document.addEventListener('click', _closeOnBodyClick, false);
+  static eventNames() {
+    return {
+      afterClose: 'a11yoffcanvas:afterClose',
+      beforeClose: 'a11yoffcanvas:beforeClose',
+      afterOpen: 'a11yoffcanvas:afterOpen',
+      beforeOpen: 'a11yoffcanvas:beforeOpen',
+    };
   }
 
   /**
-   * Remove events to A11yOffCanvas instance.
-   *
-   * @func
+   * Check if passed item is a function
+   * @private
+   * @param {Function} func - Item to check
+   * @returns {boolean}
    */
-  function _removeEvents() {
-    BUTTON.removeEventListener('click', _toggleDrawer, false);
-    document.removeEventListener('keydown', _escapeKey, false);
-    if (settings.closeOnBodyClick) document.removeEventListener('click', _closeOnBodyClick, false);
+  static isFunction(func) {
+    return func && {}.toString.call(func) === '[object Function]';
   }
 
   /**
-   * Convert a NodeList selection into an array.
-   *
-   * Take a NodeList and convert it to an array
-   * to expose useful array methods and properties.
-   *
-   * @param  {HTMLElement} el             - NodeList to convert to array
-   * @param  {HTMLElement} ctx = document - Context to query for element
-   * @return {Array}                      - Array of nodes
+   * Check if passed item is a string
+   * @private
+   * @param {String} str - Item to check
+   * @returns {boolean}
    */
-  function _queryToArray(el, ctx = document) {
-    return [].slice.call(ctx.querySelectorAll(el));
+  static isString(str) {
+    return str && {}.toString.call(str) === '[object String]';
   }
 
   /**
-   * Expose A11yOffCanvas public methods.
+   * Check if passed item is a boolean
+   * @private
+   * @param {Boolean} bool - Item to check
+   * @returns {boolean}
    */
-  return {
-    init,
-    destroy,
-    open,
-    close,
+  static isBoolean(bool) {
+    return bool && {}.toString.call(bool) === '[object Boolean]';
+  }
+
+  /**
+   * Create custom event for elements
+   * @private
+   * @param {String} eventName - Name of event to fire
+   */
+  static fireEvent(eventName) {
+    const event = new CustomEvent(eventName, {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.dispatchEvent(event);
   }
 }
-
-/**
- * Export A11yOffCanvas component.
- */
-export default A11yOffCanvas;
