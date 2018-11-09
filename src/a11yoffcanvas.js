@@ -56,6 +56,7 @@ export default class A11yOffCanvas {
   init() {
     this.addARIA();
     this.addEvents();
+    this.close();
     this.loaded = true;
 
     return this;
@@ -84,13 +85,16 @@ export default class A11yOffCanvas {
     const {
       eventNames,
       fireEvent,
-      isFunction,
       isBoolean,
+      isFunction,
+      isString,
     } = this.constructor;
     const {
       addEvents,
       afterOpenFunction,
       beforeOpenFunction,
+      drawerCloseClass,
+      drawerOpenClass,
       trapFocus,
     } = this.settings;
 
@@ -112,8 +116,12 @@ export default class A11yOffCanvas {
       beforeOpenFunction();
     }
 
-    if (this.settings.drawerOpenClass) {
-      this.drawer.classList.add(this.settings.drawerOpenClass);
+    if (drawerCloseClass && isString(drawerCloseClass)) {
+      this.drawer.classList.remove(drawerCloseClass);
+    }
+
+    if (drawerOpenClass && isString(drawerOpenClass)) {
+      this.drawer.classList.add(drawerOpenClass);
     }
 
     this.trigger.setAttribute('aria-expanded', true);
@@ -154,13 +162,16 @@ export default class A11yOffCanvas {
     const {
       eventNames,
       fireEvent,
-      isFunction,
       isBoolean,
+      isFunction,
+      isString,
     } = this.constructor;
     const {
       addEvents,
-      beforeCloseFunction,
       afterCloseFunction,
+      beforeCloseFunction,
+      drawerCloseClass,
+      drawerOpenClass,
       trapFocus,
     } = this.settings;
 
@@ -187,8 +198,12 @@ export default class A11yOffCanvas {
     this.allTriggers.forEach(trigger => trigger.setAttribute('aria-expanded', false));
 
     this.allDrawers.forEach((drawer) => {
-      if (this.settings.drawerOpenClass) {
-        drawer.classList.remove(this.settings.drawerOpenClass);
+      if (drawerOpenClass && isString(drawerOpenClass)) {
+        drawer.classList.remove(drawerOpenClass);
+      }
+
+      if (drawerCloseClass && isString(drawerCloseClass)) {
+        drawer.classList.add(drawerCloseClass);
       }
 
       drawer.setAttribute('aria-hidden', true);
