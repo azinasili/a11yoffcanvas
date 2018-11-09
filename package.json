@@ -1,7 +1,7 @@
 {
   "name": "a11yoffcanvas",
   "realname": "A11yOffCanvas",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A fully accessible and customizable off-canvas front-end component.",
   "homepage": "https://github.com/azinasili/a11yoffcanvas",
   "author": "Azin Asili <hello@azinasili.com>",
