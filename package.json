@@ -31,7 +31,7 @@
     "lint": "eslint \"{src,tests}/**/*.js\"",
     "watch": "npm-watch",
     "prepublishOnly": "npm run build",
-    "preversion": "npm run lint",
+    "preversion": "npm run build",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
